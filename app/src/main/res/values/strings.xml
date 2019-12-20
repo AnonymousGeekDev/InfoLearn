@@ -1,0 +1,14 @@
+<resources>
+    <string name="app_name">InfoLearn2.0</string>
+    <string name="title_activity_home">HomeActivity</string>
+    <string name="title_home">Accueil</string>
+    <string name="title_dashboard">Cours</string>
+    <string name="title_notifications">Reglages</string>
+    <string name="user_profile_name">jjHack42</string>
+    <string name="user_profile_number">+697777777</string>
+    <string name="logo_description">The app\'s present logo</string>
+    <string name="default_chapter_name_text">Nom du chapitre</string>
+    <string name="default_course_video_text">Nom du cours</string>
+    <string name="default_video_duration_text">Duree</string>
+    <string name="intro_message">Bienvenue!</string>
+</resources>
