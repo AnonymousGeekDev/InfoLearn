@@ -4,7 +4,6 @@ import android.animation.AnimatorSet
 import android.animation.ObjectAnimator
 import android.content.Intent
 import android.os.Bundle
-import android.os.Handler
 import android.view.View
 import android.view.ViewPropertyAnimator
 import android.view.animation.AccelerateDecelerateInterpolator
@@ -13,13 +12,16 @@ import android.widget.ImageView
 import android.widget.ProgressBar
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import tk.infotech.infolearn20.activities.HomeActivity
 
 class LaunchingActivity : AppCompatActivity() {
 
     private lateinit var logo: ImageView
     private lateinit var mWelcomeText: TextView
-    private val TIMEOUT = 3500
     private lateinit var mLoadingProgressAnim: ProgressBar
     private val ANIMATION_DURATION = 1500
     private lateinit var mLogoFadeInAnimator: ObjectAnimator
@@ -32,6 +34,12 @@ class LaunchingActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_launching)
 
+
+        //The coroutine scope in which we will launch our coroutine.
+        val coroutineScope = CoroutineScope(Dispatchers.Main)
+
+        //Do we really need to use findViewById to have access to these views? We could just use Kotlin Synthetic Lib.
+        //TODO: Replace findViewById calls and use kotlin synthetics as a replacement.
         logo = findViewById(R.id.imageView)
         mWelcomeText = findViewById(R.id.message_intro)
         mLoadingProgressAnim = findViewById(R.id.progressView)
@@ -41,39 +49,46 @@ class LaunchingActivity : AppCompatActivity() {
         mLoadingProgressAnim.visibility = View.VISIBLE
 
         launchAnimation()
-     // The handler here is used for delaying the intent code execution for some time.
-     // TODO: Could we use coroutines instead?(We will try out)
-        Handler().postDelayed({
-            val intent = Intent(this, HomeActivity::class.java)
+     // The coroutine used here is for delaying the intent code execution for some time.
+
+
+        coroutineScope.launch {
+            delay(ANIMATION_DURATION.toLong())
+            val intent = Intent(this@LaunchingActivity, HomeActivity::class.java)
             startActivity(intent)
             finish()
-        }, TIMEOUT.toLong())
+        }
 
     }
 
     private fun launchAnimation() {
-        mLogoDownwardMovementAnimator = ObjectAnimator()
-        mLogoFadeInAnimator = ObjectAnimator()
-        mTextFadeInAnimator = ObjectAnimator()
-        mTextDownwardMovementAnimator = ObjectAnimator()
-        mLogoFadeInAnimator.apply {
-            target = logo
-            setPropertyName("alpha")
-            setFloatValues(0.0f, 1.0f)
-            duration = ANIMATION_DURATION.toLong()
-            interpolator = AccelerateDecelerateInterpolator()
-        }
 
-        // This animation is used for moving the logo downwards
+        //Initialization of animators. Still considering possibility of using ObjectAnimator.ofFloat(...) for animations.
+
+        mLogoDownwardMovementAnimator = ObjectAnimator.ofFloat(logo, "translationY", 0f, 70f)
+        mLogoFadeInAnimator = ObjectAnimator.ofFloat(logo, "alpha", 0.0f, 1.0f)
+        mTextFadeInAnimator = ObjectAnimator.ofFloat(mWelcomeText, "alpha", 0.0f, 1.0f)
+        mTextDownwardMovementAnimator = ObjectAnimator.ofFloat(mWelcomeText, "translationY", 0f, 90f)
 
         mLogoDownwardMovementAnimator.apply {
-            target = logo
-            setPropertyName("translationY")
-            setFloatValues(0f, 150f)
-            duration = ANIMATION_DURATION.toLong()
             interpolator = AccelerateDecelerateInterpolator()
-
+            duration = ANIMATION_DURATION.toLong()
         }
+
+        mLogoFadeInAnimator.apply {
+            interpolator = AccelerateDecelerateInterpolator()
+            duration = ANIMATION_DURATION.toLong()
+        }
+
+        mTextFadeInAnimator.apply {
+            duration = ANIMATION_DURATION.toLong()
+        }
+
+        mTextDownwardMovementAnimator.apply {
+          //  interpolator = AccelerateDecelerateInterpolator()
+            duration = ANIMATION_DURATION.toLong()
+        }
+
 
         mScaleAndBounceAnimator = logo.animate().apply {
             scaleX(1.5f)
@@ -82,23 +97,10 @@ class LaunchingActivity : AppCompatActivity() {
             duration = ANIMATION_DURATION.toLong()
         }
 
+
         //The animation used for 'zooming' the logo in, while adding a bounce effect.
         //Using @ViewPropertyAnimator for conciseness purposes, and for compatibility testing.
         //TODO Write instrumentation tests for the animators
-
-        mTextFadeInAnimator.apply {
-            target = mWelcomeText
-            setPropertyName("alpha")
-            setFloatValues(0.0f, 1.0f)
-            duration = ANIMATION_DURATION.toLong()
-        }
-
-        mTextDownwardMovementAnimator.apply {
-            target = mWelcomeText
-            setPropertyName("translationY")
-            setFloatValues(0f, 100f)
-            duration = ANIMATION_DURATION.toLong()
-        }
 
         val set = AnimatorSet()
         set.playTogether(
@@ -111,5 +113,8 @@ class LaunchingActivity : AppCompatActivity() {
         set.start()
 
         logo.visibility = View.VISIBLE
+        mWelcomeText.visibility = View.VISIBLE
+
+
     }
 }

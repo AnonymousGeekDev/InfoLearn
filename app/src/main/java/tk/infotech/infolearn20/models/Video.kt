@@ -1,5 +1,7 @@
 package tk.infotech.infolearn20.models
 
+import java.text.SimpleDateFormat
+
 class Video {
     var videoName: String? = null
     var duration: String? = null
@@ -11,7 +13,11 @@ class Video {
         this.videoThumbNailId = videoThumbNailId
     }
 
-    constructor() {  }
+    constructor(){
+
+        videoName = "video" + SimpleDateFormat.getDateTimeInstance().parse("2020-01-22")
+
+    }
 
     // Will need to add or remove this method in order to implement the SOC principle of architecture.
 
