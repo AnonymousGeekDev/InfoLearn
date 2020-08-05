@@ -2,7 +2,7 @@ package tk.infotech.infolearn20.activities.ui.settings
 
 import android.os.Bundle
 import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProviders
+import androidx.lifecycle.ViewModelProvider
 import androidx.preference.*
 
 class SettingsFragment : PreferenceFragmentCompat() {
@@ -27,7 +27,7 @@ class SettingsFragment : PreferenceFragmentCompat() {
 
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
 
-        settingsViewModel = ViewModelProviders.of(this).get(SettingsViewModel::class.java)
+        settingsViewModel = ViewModelProvider(this).get(SettingsViewModel::class.java)
 
         val context = preferenceManager.context
         val screen = preferenceManager.createPreferenceScreen(context)

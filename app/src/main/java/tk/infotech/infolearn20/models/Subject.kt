@@ -1,10 +1,7 @@
 package tk.infotech.infolearn20.models
 
-class Subject(val subjectId: Int, val subjectName: String) {
+import android.os.Parcelable
+import kotlinx.android.parcel.Parcelize
 
-    private var chapterList: MutableList<Chapter> = ArrayList()
-
-    fun addOneOrManyChapters(vararg chapterOrChapters: Chapter){
-        chapterList.addAll(chapterOrChapters)
-    }
-}
+@Parcelize
+data class Subject(val subjectId: Int, val subjectName: String) : Parcelable
